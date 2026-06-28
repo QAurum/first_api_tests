@@ -1,23 +1,26 @@
 import requests # requests — это библиотека, которая отправляет запросы
 import pytest
+import json
 
 ''' НАЗВАНИЯ
-Название должно отражать что ты тестируешь, а не как.
-
 test_get_user_by_id
 test_create_post
 test_update_user_data
 
 ЗАПУСК
-Ты запустила тесты с -v (verbose) — это правильно. Это показывает подробный вывод. Другие полезные опции:
-
 pytest -v — подробно
-
 pytest -k "test_get" — запустить только тесты с "test_get" в названии
-
 pytest -x — ост
 '''
 
+ # Функция открывает файл и с помощью json.load() превращает его содержимое в словарь Python
+def load_config():
+
+    with open("config/config.json", "r") as f:  # открываем файл для чтения
+        return json.load(f)  # читаем и преобразуем JSON в словарь
+        
+config = load_config() #это вызов функции, которая возвращает словарь с настройками. Переменная config теперь хранит этот словарь
+base_url = config["base_url"] #это обращение к словарю по ключу "base_url", чтобы получить значение базового URL
 
 def test_get_post(): # get — это HTTP-метод (мы отправляем GET-запрос), а post — это ресурс (мы запрашиваем конкретный пост, /posts/1)
 
@@ -31,21 +34,18 @@ def test_get_post(): # get — это HTTP-метод (мы отправляем
     data = response.json() # Это метод, который преобразует тело ответа (которое приходит в формате JSON) в словарь Python. data становится словарём, к которому можно обращаться по ключам: data["id"], data["title"] и т.д.
     assert data["id"] == 1
     
-'''
-Что теперь делать (план на ближайшее время)
-Напиши ещё один тест. Например, POST-запрос на создание поста:
 
-Используй requests.post(url, json={"title": "foo", "body": "bar", "userId": 1})
+#POST-запрос на создание поста:
+def test_post_create_post():
+    url = f"{base_url}/posts"
+    # Это способ передать серверу данные в формате JSON:
+    payload = {"title": "The call of Cthulhu", "body": "Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn", "userId": 1}
+    # Параметр json= автоматически преобразует переданный словарь (payload) в JSON-строку и устанавливает правильный заголовок Content-Type: application/json
+    requests = requests.post(url, json=payload)
+    data = response.json()
+    assert response.status_code == 201
+    assert isinstance(data["id"], int)
 
-Проверь статус-код и наличие id в ответе.
-
-Вынеси URL в конфиг. Создай config/config.json:
-
-json
-{
-    "base_url": "https://jsonplaceholder.typicode.com"
-}
-И читай его в тесте через json.load(). Это сделает код гибче.
 
 Залей код на GitHub и добавь простой README.md с описанием проекта (это будет твоё портфолио).
 

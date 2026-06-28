@@ -1,2 +1,5 @@
 # first_api_tests
-first works with api
+Pytest requests API testin
+
+Ресурс для работы 
+https://jsonplaceholder.typicode.com/
