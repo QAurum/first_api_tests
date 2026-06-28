@@ -1,6 +1,8 @@
 name: Run API Tests
 
 on: [push, pull_request]
+    schedule:
+    - cron: '0 9 * * *'
 
 jobs:
   test:
